@@ -24,6 +24,7 @@ function MainNotice(){
         공지사항
         </Typography>
         <li> 베이스 세팅 완료 </li>
+        <li> 로그인 화면 세팅 완료 </li>
 
         
     </Box>
