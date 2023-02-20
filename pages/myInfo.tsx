@@ -1,19 +1,35 @@
 import kakaoLoginBtn from '../images/kakaoLoginBtn.png';
 import googleLoginBtn from '../images/googleLoginBtn.png';
+import kakaoConnecntBtn from '../images/kakaoConnect.png';
+
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import Image from 'next/image'
 import { Box, width } from '@mui/system';
 import React, { Component, useState } from 'react';
-import { Button, Grid } from '@mui/material';
+import { Button, Divider, Grid } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
-
-let isLogin = false;
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
+import Switch from '@mui/material/Switch';
+import WifiIcon from '@mui/icons-material/Wifi';
+import BluetoothIcon from '@mui/icons-material/Bluetooth';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import CampaignIcon from '@mui/icons-material/Campaign';
+import GroupIcon from '@mui/icons-material/Group';
+import PersonIcon from '@mui/icons-material/Person';
+import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LinkOffIcon from '@mui/icons-material/LinkOff';
+let isLogin = true;
 
 //grid css설정
-const Item = styled(Paper)(({ theme }) => ({
+  const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
     padding: theme.spacing(1),
@@ -31,64 +47,126 @@ const Item = styled(Paper)(({ theme }) => ({
   }));
 
 export default function myInfo () {
-    const [isLogin, setLoginStatus] = useState(false);
+    const [isLogin, setLoginStatus] = useState(true);
+    const [checked, setChecked] = React.useState(['wifi']);
     
     const checkLogin = () =>{
         setLoginStatus(true);
         console.log(isLogin);
     }
 
+    const handleToggle = (value: string) => () => {
+      const currentIndex = checked.indexOf(value);
+      const newChecked = [...checked];
+  
+      if (currentIndex === -1) {
+        newChecked.push(value);
+      } else {
+        newChecked.splice(currentIndex, 1);
+      }
+  
+      setChecked(newChecked);
+    };
+  
+
     if (isLogin) {
         return <Box> 
                <Grid container  spacing={4}
                 justifyContent="center"
                 alignItems="center"
+                textAlign="center"
                 marginTop="40px"
-                direction="column"
                 >
-                    <Grid item xs={12}>
-                        <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    
-                        <Box
-                            sx={{
-                                p: 4,
-                                bgcolor: 'background.default',
-                                display: 'grid',
-                                gridTemplateColumns: { md: '1fr 1fr' },
-                                gap: 2,
-                            }}
-                            >
-                            <Item elevation={3}>
-                                오늘 출석
-                                <Box sx={{color:'red'}}> 
-                                    3
-                                </Box>
-                            </Item>
-                            <Item elevation={3}>
-                                한달 누적출석
-                                <Box sx={{color:'red'}}> 
-                                    3
-                                </Box>
-                            </Item>
-
-
+                    <Grid item xs={12} >
+                        <Avatar sx={{display:'-webkit-inline-box'}} alt="Dohamsu" src="/static/images/avatar/1.jpg" />
+       
+                        <Box sx={{paddingTop:'10px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignContent: 'space-around',
+                                    justifyContent: 'center',
+                                    alignItems: 'center'}}>
+                            <Box sx={{ display: 'flex'}}>
+                                <Image src={kakaoConnecntBtn} alt="카카오 연결" width={30} height={30}/>
+                                <Typography variant="h6" component="h6" sx={{paddingLeft:'10px'}}>
+                                도함수의활용
+                                </Typography>
                             </Box>
+                            <Box >
+                                <Typography variant="h6" component="h6" sx={{paddingLeft:'10px'}}>
+                                19기 연주단 세컨 3 
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12}  sx={{textAlign:"-webkit-center"}} >
+               
+                    <List
+                        sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                        // subheader={<ListSubheader>설정</ListSubheader>}
+                        >
+                        <ListItem>
+                            <ListItemIcon>
+                            <NotificationsIcon />
+                            </ListItemIcon>
+                            <ListItemText id="switch-list-label-wifi" primary="출석체크 가능알림" />
+                            <Switch
+                            edge="end"
+                            onChange={handleToggle('wifi')}
+                            checked={checked.indexOf('wifi') !== -1}
+                            inputProps={{
+                                'aria-labelledby': 'switch-list-label-wifi',
+                            }}
+                            />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemIcon>
+                            <CampaignIcon />
+                            </ListItemIcon>
+                            <ListItemText id="switch-list-label-bluetooth" primary="공지알림 수신" />
+                            <Switch
+                            edge="end"
+                            onChange={handleToggle('bluetooth')}
+                            checked={checked.indexOf('bluetooth') !== -1}
+                            inputProps={{
+                                'aria-labelledby': 'switch-list-label-bluetooth',
+                            }}
+                            />
+                        </ListItem>
+                    </List>
+
+                    <Divider light />
 
                     </Grid>
-                    <Grid item xs={12}>
-                     
-                    </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sx={{paddingTop:'0px !important',textAlign:"-webkit-center"}}>
+                    <List
+                        sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                        >
+                        <ListItem>
+                            <ListItemIcon> <PersonIcon /></ListItemIcon>
+                            <ListItemText id="switch-list-label-wifi" primary="닉네임 설정" />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemIcon><ContactPhoneIcon /></ListItemIcon>
+                            <ListItemText id="switch-list-label-bluetooth" primary="연락처 수정" />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemIcon><GroupIcon /></ListItemIcon>
+                            <ListItemText id="switch-list-label-bluetooth" primary="소속 수정" />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemIcon><LinkOffIcon /></ListItemIcon>
+                            <ListItemText id="switch-list-label-bluetooth" primary="소셜 로그인 연동 해제" />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemIcon><LogoutIcon /></ListItemIcon>
+                            <ListItemText id="switch-list-label-bluetooth" primary="로그아웃" />
+                        </ListItem>
+                        </List>
                     </Grid>
                     <Grid item xs={12}>
                     </Grid>
                 </Grid> 
-            
-
-
-    
-               
-
         </Box>;
       }
       else{
