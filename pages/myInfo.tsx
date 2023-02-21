@@ -1,13 +1,14 @@
 import kakaoLoginBtn from '../images/kakaoLoginBtn.png';
 import googleLoginBtn from '../images/googleLoginBtn.png';
 import kakaoConnecntBtn from '../images/kakaoConnect.png';
-
+import AlertDialog from '../components/Dialog'
+import {initKakao,kakaoLogin,requestUserInfo,checkKakaoLogin} from '../components/KakaoLoginAPI'
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import Image from 'next/image'
 import { Box, width } from '@mui/system';
-import React, { Component, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { Button, Divider, Grid } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
@@ -17,8 +18,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import Switch from '@mui/material/Switch';
-import WifiIcon from '@mui/icons-material/Wifi';
-import BluetoothIcon from '@mui/icons-material/Bluetooth';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import GroupIcon from '@mui/icons-material/Group';
@@ -26,16 +25,20 @@ import PersonIcon from '@mui/icons-material/Person';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LinkOffIcon from '@mui/icons-material/LinkOff';
+import axios from 'axios';
+import { useRouter } from 'next/router'
+
+
 let isLogin = true;
 
 //grid css설정
   const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    width:'183px',
+      backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+      ...theme.typography.body2,
+      padding: theme.spacing(1),
+      textAlign: 'center',
+      color: theme.palette.text.secondary,
+      width:'183px',
     height:'45px',
   }));
 
@@ -46,10 +49,24 @@ let isLogin = true;
     margin:'10px'
   }));
 
+  //카카오 로그인 체크
+
 export default function myInfo () {
-    const [isLogin, setLoginStatus] = useState(true);
-    const [checked, setChecked] = React.useState(['wifi']);
     
+    //kakao Init
+    useEffect(() => {
+        initKakao();
+    }, []);
+    checkKakaoLogin();
+    
+
+
+
+
+    const [isLogin, setLoginStatus] = useState(false);
+    const [checked, setChecked] = React.useState(['wifi']);
+    const [open, setOpen] = React.useState(false);
+
     const checkLogin = () =>{
         setLoginStatus(true);
         console.log(isLogin);
@@ -158,7 +175,9 @@ export default function myInfo () {
                             <ListItemIcon><LinkOffIcon /></ListItemIcon>
                             <ListItemText id="switch-list-label-bluetooth" primary="소셜 로그인 연동 해제" />
                         </ListItem>
-                        <ListItem>
+                        <ListItem
+                            onClick={function(){setOpen(true)}}
+                        >
                             <ListItemIcon><LogoutIcon /></ListItemIcon>
                             <ListItemText id="switch-list-label-bluetooth" primary="로그아웃" />
                         </ListItem>
@@ -167,6 +186,7 @@ export default function myInfo () {
                     <Grid item xs={12}>
                     </Grid>
                 </Grid> 
+                <AlertDialog open={open} dialogCloseCallback={function(){setOpen(false); setLoginStatus(false);}}/>
         </Box>;
       }
       else{
@@ -188,11 +208,11 @@ export default function myInfo () {
 
                     </Grid>
                     <Grid item xs={12}>
-                        <Item onClick={checkLogin}>로그인 하기</Item>
-                        <Item sx={{color:'white',backgroundColor:'black', marginTop:'30px'}}>회원가입</Item>
+                        <Item onClick={requestUserInfo}>로그인 하기</Item>
+                        <Item onClick={requestUserInfo} sx={{color:'white',backgroundColor:'black', marginTop:'30px'}}>회원가입</Item>
                     </Grid>
-                    <Grid item xs={12}>
-                        <KakaoImage></KakaoImage>
+                    <Grid item xs={12} onClick={kakaoLogin}>
+                        <KakaoImage ></KakaoImage>
                     </Grid>
                     <Grid item xs={12}>
                         <GoogleImage></GoogleImage>
@@ -200,7 +220,7 @@ export default function myInfo () {
                 </Grid>         
             </Box>;
 
-      }
+    }
 }
 
 function KakaoImage(){

@@ -10,6 +10,15 @@ interface State {
   Store: RootStore;
 }
 
+declare global{
+  interface Window{
+    Cypress:unknown;
+    Kakao:any;
+    Location:any;
+  }
+}
+
+
 export default class MainContainer extends App < {}, State> {
   state: State = {
     Store: new RootStore()

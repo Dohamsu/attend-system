@@ -17,6 +17,7 @@
            <title> 간편 출석체크 시스템 </title>
          <Head>
            <meta property="custom" content="123123" charSet="UTF-8"/>
+           <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.1.0/kakao.min.js"  integrity="sha384-dpu02ieKC6NUeKFoGMOKz6102CLEWi9+5RQjWSV0ikYSFFd8M3Wp2reIcquJOemx" crossOrigin="anonymous"></script>
          </Head>
          <body>
            <Main />
