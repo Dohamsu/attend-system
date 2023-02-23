@@ -1,6 +1,7 @@
 import  React ,{useEffect, useState}from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router'
+import { useStore } from '../stores/Context';
 
 
 
@@ -23,7 +24,13 @@ function requestUserInfo() {
 }
 
 //토큰 검사
-function checkKakaoLogin() {
+function checkKakaoLogin(callback:any,callback2:any) {
+
+  const { loginStore } = useStore();
+  const { loginInfo } = loginStore;
+
+
+
     let headers = {
         'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'Accept': '*/*'
@@ -43,9 +50,14 @@ function checkKakaoLogin() {
       
             axios.post('https://kapi.kakao.com/v2/user/me', {
             }, {headers})
-            .then(function (response) {
+            .then(function (response:any) {
               console.log(response);
-              
+              let data = response.data.kakao_account.profile;
+              let nickName = data.nickname;
+              let profileImg = data.profile_image_url;
+              let thumbImg = data.thumbnail_image_url;
+              callback({"nickName":nickName, "profileImg" :profileImg,"thumbImg":thumbImg});
+              callback2(true);
             })
             .catch(function (error) {
               console.log(error);

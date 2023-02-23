@@ -25,47 +25,49 @@ import PersonIcon from '@mui/icons-material/Person';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LinkOffIcon from '@mui/icons-material/LinkOff';
-import axios from 'axios';
-import { useRouter } from 'next/router'
+import { useStore } from '../stores/Context';
+
 
 
 let isLogin = true;
 
 //grid css설정
-  const Item = styled(Paper)(({ theme }) => ({
-      backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-      ...theme.typography.body2,
-      padding: theme.spacing(1),
-      textAlign: 'center',
-      color: theme.palette.text.secondary,
-      width:'183px',
+const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+    width:'183px',
     height:'45px',
-  }));
+}));
 
-  //입력창 css설정
-  const TextInput = styled(TextField)(({  }) => ({
+//입력창 css설정
+const TextInput = styled(TextField)(({  }) => ({
     textAlign: 'center',
     width:'250px',
     margin:'10px'
-  }));
+}));
 
-  //카카오 로그인 체크
+
+
 
 export default function myInfo () {
+    
+    
+    const [isLogin, setLoginStatus] = useState(false);
+    const [checked, setChecked] = React.useState(['wifi']);
+    const [open, setOpen] = React.useState(false);
+    //   //로그인 정보 store
+    const { loginStore } = useStore();
+    const { loginInfo } = loginStore;
     
     //kakao Init
     useEffect(() => {
         initKakao();
     }, []);
-    checkKakaoLogin();
-    
+    // checkKakaoLogin(setLoginInfo,setLoginStatus);
 
-
-
-
-    const [isLogin, setLoginStatus] = useState(false);
-    const [checked, setChecked] = React.useState(['wifi']);
-    const [open, setOpen] = React.useState(false);
 
     const checkLogin = () =>{
         setLoginStatus(true);
@@ -86,7 +88,7 @@ export default function myInfo () {
     };
   
 
-    if (isLogin) {
+    if (loginInfo.isLogin) {
         return <Box> 
                <Grid container  spacing={4}
                 justifyContent="center"
@@ -95,7 +97,7 @@ export default function myInfo () {
                 marginTop="40px"
                 >
                     <Grid item xs={12} >
-                        <Avatar sx={{display:'-webkit-inline-box'}} alt="Dohamsu" src="/static/images/avatar/1.jpg" />
+                        <Avatar sx={{display:'-webkit-inline-box'}} alt="Dohamsu" src={loginInfo.nickName} />
        
                         <Box sx={{paddingTop:'10px',
                                     display: 'flex',
@@ -106,12 +108,12 @@ export default function myInfo () {
                             <Box sx={{ display: 'flex'}}>
                                 <Image src={kakaoConnecntBtn} alt="카카오 연결" width={30} height={30}/>
                                 <Typography variant="h6" component="h6" sx={{paddingLeft:'10px'}}>
-                                도함수의활용
+                                {loginInfo.nickName}
                                 </Typography>
                             </Box>
                             <Box >
                                 <Typography variant="h6" component="h6" sx={{paddingLeft:'10px'}}>
-                                19기 연주단 세컨 3 
+                                19기 연주단 세컨 3  
                                 </Typography>
                             </Box>
                         </Box>
@@ -194,7 +196,7 @@ export default function myInfo () {
             sx={{ textAlign:'center', alignContent:'center',padding:'20px'}}
             >
                 <Typography variant="h4" component="h4">
-                로그인
+                로그인 
                 </Typography>
                 <Grid container  spacing={4}
                 justifyContent="center"

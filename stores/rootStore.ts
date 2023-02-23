@@ -1,15 +1,13 @@
-import BasketStore from './BasketStore';
-import ProductStore from './ProductStore';
-import CounterStore from './CounterStore';
+import GlobalStore from './GlobalStore';
+import LoginStore from './LoginStore';
 
-export default class RootStore{
-    constructor(){
-        this.basketStore = new BasketStore(this);
-        this.productStore = new ProductStore(this);
-        this.counterStore = new CounterStore(this);
-    }
+export default class RootStore {
+  globalStore;
 
-    basketStore: BasketStore;
-    productStore: ProductStore;
-    counterStore: CounterStore;
+  loginStore;
+
+  constructor() {
+    this.globalStore = new GlobalStore(this);
+    this.loginStore = new LoginStore(this);
+  }
 }

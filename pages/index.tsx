@@ -3,7 +3,7 @@ import  React ,{useState}from 'react';
 import Main from './main';
 
 import {Provider} from 'mobx-react'
-import RootStore from '../stores/rootStore'
+import RootStore from '../stores/RootStore'
 
 const rootStore = new RootStore();
 
