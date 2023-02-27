@@ -10,13 +10,12 @@ const initKakao = () => {
   const Kakao = window.Kakao;
   if (Kakao && !Kakao.isInitialized()) {
     Kakao.init(jsKey);
-    console.log(Kakao.isInitialized());
   }
 };
 
 const kakaoLogin = () => {
   const Kakao = window.Kakao;
-  Kakao.Auth.authorize({      prompts: 'login' ,    redirectUri : 'http://localhost:3000/myInfo'    });
+  Kakao.Auth.authorize({prompts: 'login' ,redirectUri : 'http://localhost:3000/myInfo'});
   
 };
 
@@ -24,28 +23,22 @@ function requestUserInfo() {
 }
 
 //토큰 검사
-function checkKakaoLogin(callback:any,callback2:any) {
+function checkKakaoLogin(callback:any) {
 
   const { loginStore } = useStore();
-  const { loginInfo } = loginStore;
-
-
+  const { loginInfo }  = loginStore;    
+  const router         = useRouter();
 
     let headers = {
         'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'Accept': '*/*'
       }
-
-      
-      const router = useRouter();
-      const kakaoCode = router.query.code;
     useEffect(() => {
       let acToken  = sessionStorage.getItem("kakaoAccessToken");
-      console.log(kakaoCode);
       
         let authHeader = { 'Authorization': 'Bearer '+acToken,};
         headers ={...authHeader,...headers}
-          if(kakaoCode && acToken){
+          if(acToken){
             console.log("토큰있음");
       
             axios.post('https://kapi.kakao.com/v2/user/me', {
@@ -56,35 +49,44 @@ function checkKakaoLogin(callback:any,callback2:any) {
               let nickName = data.nickname;
               let profileImg = data.profile_image_url;
               let thumbImg = data.thumbnail_image_url;
-              callback({"nickName":nickName, "profileImg" :profileImg,"thumbImg":thumbImg});
-              callback2(true);
+
+              loginInfo.nickName = nickName;
+              loginInfo.profileImg = profileImg;
+              loginInfo.thumbImg = thumbImg;
+              loginInfo.nickName = nickName;
+              loginInfo.isLogin = true;
+              callback(true);
+              console.log(loginInfo);
             })
             .catch(function (error) {
               console.log(error);
-            
+              sessionStorage.setItem("kakaoAccessToken","");
+              sessionStorage.setItem("kakaoRefreshToken","");    
+              console.log("토큰 만료 재시도");        
             });
       
-          }else if(kakaoCode != null && kakaoCode != undefined){
-            console.log("토큰없음");
-            requestToken();
+          }else{
+            callback(false);
 
           }
     
-    }, [kakaoCode])
+    }, [])
 
 
 
     function requestToken(){
+      let refreshToken     = "";
       const headers   = {
         'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'Accept': '*/*'
       }
-      if(kakaoCode){
+      
+      if(refreshToken){
         
         axios.post('https://kauth.kakao.com/oauth/token', {
             grant_type : 'authorization_code',
             client_id : "5321f78ebcacf271f4e9e6f32713cce6",
-            code: kakaoCode,
+            code: refreshToken,
             redirect_uri : 'http://localhost:3000/myInfo'
           }, {headers})
           .then(function (response) {

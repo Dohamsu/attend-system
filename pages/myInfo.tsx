@@ -26,6 +26,7 @@ import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LinkOffIcon from '@mui/icons-material/LinkOff';
 import { useStore } from '../stores/Context';
+import router from 'next/router';
 
 
 
@@ -50,14 +51,26 @@ const TextInput = styled(TextField)(({  }) => ({
 }));
 
 
+const handleToggle = (value: string) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
 
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setChecked(newChecked);
+  };
+  let isFirst = true;
 
 export default function myInfo () {
     
     
-    const [isLogin, setLoginStatus] = useState(false);
+    const [isLogin, setLoginStatus] = useState(Boolean);
     const [checked, setChecked] = React.useState(['wifi']);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(false); //for popup
     //   //로그인 정보 store
     const { loginStore } = useStore();
     const { loginInfo } = loginStore;
@@ -66,29 +79,30 @@ export default function myInfo () {
     useEffect(() => {
         initKakao();
     }, []);
-    // checkKakaoLogin(setLoginInfo,setLoginStatus);
-
-
-    const checkLogin = () =>{
+    
+    // storage 검사 1회 
+    if(loginInfo.isLogin==true&& isFirst){
+        console.log("여기 1차 렌더");
         setLoginStatus(true);
-        console.log(isLogin);
+        isFirst = false;
+    }else{
+        console.log("여기 2차 렌더");
+
+        checkKakaoLogin(setLoginStatus);
+        isFirst = false;
+
     }
 
-    const handleToggle = (value: string) => () => {
-      const currentIndex = checked.indexOf(value);
-      const newChecked = [...checked];
-  
-      if (currentIndex === -1) {
-        newChecked.push(value);
-      } else {
-        newChecked.splice(currentIndex, 1);
-      }
-  
-      setChecked(newChecked);
-    };
-  
 
-    if (loginInfo.isLogin) {
+    // checkKakaoLogin(setLoginStatus);
+    // if(loginInfo.isLogin===false){
+    // }else if(loginInfo.isLogin===true){
+    //     setLoginStatus(true);
+    // }
+
+
+    
+    if (isLogin===true && isFirst ==false) {
         return <Box> 
                <Grid container  spacing={4}
                 justifyContent="center"
@@ -97,7 +111,7 @@ export default function myInfo () {
                 marginTop="40px"
                 >
                     <Grid item xs={12} >
-                        <Avatar sx={{display:'-webkit-inline-box'}} alt="Dohamsu" src={loginInfo.nickName} />
+                        <Avatar sx={{display:'-webkit-inline-box'}} alt="Dohamsu" src={loginInfo.thumbImg} />
        
                         <Box sx={{paddingTop:'10px',
                                     display: 'flex',
@@ -191,7 +205,7 @@ export default function myInfo () {
                 <AlertDialog open={open} dialogCloseCallback={function(){setOpen(false); setLoginStatus(false);}}/>
         </Box>;
       }
-      else{
+      else if(isLogin===false && isFirst ==false){
         return <Box
             sx={{ textAlign:'center', alignContent:'center',padding:'20px'}}
             >
@@ -212,6 +226,7 @@ export default function myInfo () {
                     <Grid item xs={12}>
                         <Item onClick={requestUserInfo}>로그인 하기</Item>
                         <Item onClick={requestUserInfo} sx={{color:'white',backgroundColor:'black', marginTop:'30px'}}>회원가입</Item>
+                        <Item  sx={{color:'white',backgroundColor:'black', marginTop:'30px'}}>{loginInfo.profileImg}</Item>
                     </Grid>
                     <Grid item xs={12} onClick={kakaoLogin}>
                         <KakaoImage ></KakaoImage>
@@ -220,6 +235,8 @@ export default function myInfo () {
                         <GoogleImage></GoogleImage>
                     </Grid>
                 </Grid>         
+
+                
             </Box>;
 
     }
